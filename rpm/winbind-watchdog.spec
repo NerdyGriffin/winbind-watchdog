@@ -1,5 +1,5 @@
 Name:           winbind-watchdog
-Version:        1.0.0
+Version:        1.0.1
 Release:        1%{?dist}
 Summary:        Detect and recover hung winbind idmap/trust state
 License:        GPL-3.0
@@ -57,6 +57,10 @@ fi
 systemctl daemon-reload &>/dev/null || :
 
 %changelog
+* Tue Apr 21 2026 NerdyGriffin - 1.0.1-1
+- Remove ConditionPathIsExecutable= from .service unit (not supported on
+  EL8's systemd 239)
+
 * Tue Apr 21 2026 NerdyGriffin - 1.0.0-1
 - Initial RPM package
 - Probe: `wbinfo -t` with configurable timeout

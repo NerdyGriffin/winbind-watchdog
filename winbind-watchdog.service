@@ -3,8 +3,6 @@ Description=Winbind health probe and recovery
 Documentation=https://github.com/NerdyGriffin/winbind-watchdog
 After=winbind.service
 Wants=winbind.service
-# Don't pile up overlapping runs if a recovery takes a while
-ConditionPathIsExecutable=/usr/sbin/winbind-watchdog.sh
 
 [Service]
 Type=oneshot
