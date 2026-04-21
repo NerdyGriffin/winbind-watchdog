@@ -1,0 +1,15 @@
+[Unit]
+Description=Winbind health probe and recovery
+Documentation=https://github.com/NerdyGriffin/winbind-watchdog
+After=winbind.service
+Wants=winbind.service
+# Don't pile up overlapping runs if a recovery takes a while
+ConditionPathIsExecutable=/usr/sbin/winbind-watchdog.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/winbind-watchdog.sh
+# Probe timeout + recovery headroom. Keep well under the timer interval.
+TimeoutStartSec=90
+StandardError=journal
+Nice=10

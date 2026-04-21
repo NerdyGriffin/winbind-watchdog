@@ -1,0 +1,24 @@
+# winbind-watchdog configuration — sourced as bash.
+# All settings are optional; uncomment to override defaults.
+
+# Probe timeout (seconds). `wbinfo -t` normally returns in <1s; anything
+# longer than this is treated as a hang.
+#PROBE_TIMEOUT=10
+
+# Probe command (bash array). Must exit 0 when winbind is healthy.
+#PROBE_CMD=(wbinfo -t)
+
+# Seconds to wait after `systemctl restart winbind` before re-probing.
+#RECOVERY_GRACE=3
+
+# Kerberos principal for the machine account. Normally auto-derived as
+# "<SHORTHOSTNAME>$@<DEFAULT_REALM_FROM_KRB5_CONF>". Set explicitly if
+# auto-detection is wrong (e.g. host is joined under a different sAMAccountName).
+#MACHINE_PRINCIPAL='HL15-00$@AD.NERDYGRIFFIN.NET'
+
+# Kerberos realm. Only used if MACHINE_PRINCIPAL is unset and /etc/krb5.conf
+# has no default_realm.
+#REALM='AD.NERDYGRIFFIN.NET'
+
+# Set to 1 to log what recovery would do without actually doing it.
+#DRY_RUN=0
