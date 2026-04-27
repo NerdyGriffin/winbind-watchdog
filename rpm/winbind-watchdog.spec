@@ -1,5 +1,5 @@
 Name:           winbind-watchdog
-Version:        1.0.1
+Version:        1.1.0
 Release:        1%{?dist}
 Summary:        Detect and recover hung winbind idmap/trust state
 License:        GPL-3.0
@@ -15,11 +15,16 @@ BuildRequires:  systemd
 %{?systemd_requires}
 
 %description
-A systemd timer that periodically probes winbind with `wbinfo -t`. If the
-probe fails (a classic symptom of winbindd getting wedged on idmap_ad or
-trust credential operations, often after DC maintenance or machine password
-rotation), the watchdog force-kills winbindd, refreshes the machine-account
-Kerberos ticket via `kinit -k`, and restarts the winbind service.
+A systemd timer that periodically probes winbind health and recovers it
+when wedged. Two probe modes:
+  - Mode 1: `wbinfo -t` (always active) — catches a wedged trust state.
+  - Mode 2: `getent passwd "$IDMAP_PROBE_USER"` (opt-in via config) —
+    catches the case where wbinfo -t succeeds but SID→UID resolution
+    via idmap_ad LDAP is broken (e.g. expired machine-account TGT).
+
+On probe failure the watchdog force-kills winbindd, refreshes the
+machine-account Kerberos ticket via `kinit -k`, and restarts the winbind
+service.
 
 Config lives in /etc/winbind-watchdog.conf.
 
@@ -57,6 +62,18 @@ fi
 systemctl daemon-reload &>/dev/null || :
 
 %changelog
+* Mon Apr 27 2026 NerdyGriffin - 1.1.0-1
+- Add optional second probe IDMAP_PROBE_USER for mode-2 failures where
+  `wbinfo -t` succeeds but SID->UID resolution via idmap_ad LDAP is
+  broken (real incident: machine-account TGT expired silently;
+  watchdog stayed silent while smbd connections all failed
+  getpwuid()). When set to 'DOMAIN\user', also runs
+  `timeout PROBE_TIMEOUT getent passwd "$IDMAP_PROBE_USER"` and
+  triggers recovery on timeout. Default empty = old 1.0.x behavior.
+- Misconfigured IDMAP_PROBE_USER (typo / removed account) logs a
+  warning and is treated as healthy to avoid recovery loops on
+  config errors.
+
 * Tue Apr 21 2026 NerdyGriffin - 1.0.1-1
 - Remove ConditionPathIsExecutable= from .service unit (not supported on
   EL8's systemd 239)

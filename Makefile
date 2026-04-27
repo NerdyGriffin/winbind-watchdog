@@ -1,5 +1,5 @@
 NAME    := winbind-watchdog
-VERSION := 1.0.1
+VERSION := 1.1.0
 TARBALL := $(NAME)-$(VERSION).tar.gz
 
 .PHONY: rpm tarball clean

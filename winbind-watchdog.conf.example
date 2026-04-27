@@ -22,3 +22,12 @@
 
 # Set to 1 to log what recovery would do without actually doing it.
 #DRY_RUN=0
+
+# Optional second probe — DOMAIN\user format, single-quoted to keep the
+# backslash literal. If set, the watchdog also runs:
+#   timeout $PROBE_TIMEOUT getent passwd "$IDMAP_PROBE_USER"
+# and triggers recovery if it times out. Catches mode-2 failures where
+# `wbinfo -t` succeeds but SID→UID resolution via idmap_ad LDAP is broken
+# (smbd logs "getpwuid(...) failed, is nsswitch configured?"). Use a
+# stable, never-removed service or admin account. Empty = disabled.
+#IDMAP_PROBE_USER='NERDYGRIFFIN\christian.admin'
