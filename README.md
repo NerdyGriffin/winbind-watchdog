@@ -1,5 +1,15 @@
 # winbind-watchdog
 
+> [!IMPORTANT]
+> **Deprecated — migrated to an Ansible role.**
+> This functionality now lives in the Ansible role
+> [**nerdygriffin.winbind_watchdog**](https://github.com/NerdyGriffin/ansible-role-winbind_watchdog),
+> which packages the same probe/recovery script (plus a fast-fail + cooldown
+> improvement to the idmap probe) as a distro-agnostic role — no RPM build
+> required, and state is managed declaratively by Ansible. New deployments
+> should use the role. This repository is retained for history only and is no
+> longer maintained.
+
 A systemd timer that periodically probes winbind with `wbinfo -t` and, if the probe fails, runs a targeted recovery sequence. Intended for realm-joined AD member servers (e.g. Samba file servers) where winbindd can silently wedge on `idmap_ad` / trust credential operations — typically after a DC blip or machine-password rotation.
 
 ## Why not just `systemctl restart winbind`?
